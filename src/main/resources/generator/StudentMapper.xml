@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.StudentMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Student">
+    <id column="Snum" jdbcType="CHAR" property="snum" />
+    <result column="Sname" jdbcType="CHAR" property="sname" />
+    <result column="Ssex" jdbcType="CHAR" property="ssex" />
+    <result column="Sage" jdbcType="INTEGER" property="sage" />
+    <result column="SClass" jdbcType="CHAR" property="sclass" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    Snum, Sname, Ssex, Sage, SClass
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from student
+    where Snum = #{snum,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from student
+    where Snum = #{snum,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" keyColumn="Snum" keyProperty="snum" parameterType="com.example.demo.entity.Student" useGeneratedKeys="true">
+    insert into student (Sname, Ssex, Sage, 
+      SClass)
+    values (#{sname,jdbcType=CHAR}, #{ssex,jdbcType=CHAR}, #{sage,jdbcType=INTEGER}, 
+      #{sclass,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="Snum" keyProperty="snum" parameterType="com.example.demo.entity.Student" useGeneratedKeys="true">
+    insert into student
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sname != null">
+        Sname,
+      </if>
+      <if test="ssex != null">
+        Ssex,
+      </if>
+      <if test="sage != null">
+        Sage,
+      </if>
+      <if test="sclass != null">
+        SClass,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sname != null">
+        #{sname,jdbcType=CHAR},
+      </if>
+      <if test="ssex != null">
+        #{ssex,jdbcType=CHAR},
+      </if>
+      <if test="sage != null">
+        #{sage,jdbcType=INTEGER},
+      </if>
+      <if test="sclass != null">
+        #{sclass,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Student">
+    update student
+    <set>
+      <if test="sname != null">
+        Sname = #{sname,jdbcType=CHAR},
+      </if>
+      <if test="ssex != null">
+        Ssex = #{ssex,jdbcType=CHAR},
+      </if>
+      <if test="sage != null">
+        Sage = #{sage,jdbcType=INTEGER},
+      </if>
+      <if test="sclass != null">
+        SClass = #{sclass,jdbcType=CHAR},
+      </if>
+    </set>
+    where Snum = #{snum,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Student">
+    update student
+    set Sname = #{sname,jdbcType=CHAR},
+      Ssex = #{ssex,jdbcType=CHAR},
+      Sage = #{sage,jdbcType=INTEGER},
+      SClass = #{sclass,jdbcType=CHAR}
+    where Snum = #{snum,jdbcType=CHAR}
+  </update>
+</mapper>

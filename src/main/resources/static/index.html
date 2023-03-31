@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>学生信息查询系统</title>
+    <style>
+        /* 样式表 */
+        #searchForm {
+            margin-bottom: 20px;
+        }
+        #SQLSearchForm {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #SQLSearchResult{
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #SQLSearchResult th, #SQLSearchResult td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+
+        #resultSearchAll_1 {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #resultSearchAll_1 th, #resultSearchAll_1 td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+        #resultSearchAll_2 {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #resultSearchAll_2 th, #resultSearchAll_2 td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+        #resultSearchAll_3 {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #resultSearchAll_3 th, #resultSearchAll_3 td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+        #resultTable {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #resultTable th, #resultTable td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
+    <script src="/js/jquery-3.6.0.min.js"></script>
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <script>
+        // JavaScript代码
+        $(function() {
+            // 当搜索按钮被点击时，发送AJAX请求
+            $("#searchBtn").click(function() {
+                // 获取检索条件
+                var sid = $("#sid").val();
+                var name = $("#name").val();
+                var ageFrom = $("#ageFrom").val();
+                var ageTo = $("#ageTo").val();
+                var gender = $("input[name='gender']:checked").val();
+                var classId = $("#classId").val();
+                // var dept = $("#dept").val();
+                // var address = $("#address").val();
+
+                // 构造SQL语句
+                var sql = "SELECT * FROM student WHERE 1=1";
+                if (sid != "") sql += " AND Snum='" + sid + "'";
+                if (name != "") sql += " AND Sname like '" + name + "%'";
+                if (ageFrom != "") sql += " AND Sage>=" + ageFrom;
+                if (ageTo != "") sql += " AND Sage<=" + ageTo;
+                if (gender != undefined && gender != "全部") sql += " AND Ssex='" + gender + "'";
+                if (classId != "") sql += " AND SClass='" + classId + "'";
+                // if (dept != "") sql += " AND dept='" + dept + "'";
+                // if (address != "") sql += " AND address='" + address + "'";
+
+                $("#SQLString").val(sql);
+
+                //$("#resultTable").append("<tr id = 'init' class='init'>" + tr_Sql + "</tr>>");
+
+                console.log(sql);
+                // 发送AJAX请求
+                // $.ajax({
+                //     type: "POST",
+                //     url: "/search/condition",
+                //     data: {SQLrequest: sql},
+                //     success: function(data){
+                //         // 在表格中显示查询结果
+                //         $(document).find("tr[class='init']").remove();
+                //         $.each(data, function (index, item) {
+                //             let tr;
+                //             tr = '<td>' + item.snum + '</td>'
+                //                 + '<td>' + item.sname + '</td>'
+                //                 + '<td>' + item.ssex + '</td>'
+                //                 + '<td>' + item.sage + '</td>'
+                //                 + '<td>' + item.sclass + '</td>';
+                //             $("#resultTable").append("<tr id = 'init' class='init'>" + tr + "</tr>")
+                //         })},
+                //
+                //         $("#resultTable").html(result);
+                //
+                //     error: function() {
+                //         alert("查询失败，请重试！");
+                //     }
+                // });
+            });
+        });
+        //Search_All_1
+        $(function() {
+            // 当搜索按钮被点击时，发送AJAX请求
+            $("#searchButton").click(function() {
+                // 获取检索条件
+                var dataBaseName = $("#dataBaseName").val();
+                // 构造SQL语句
+                var sql = "SELECT * FROM "+ dataBaseName ;
+
+
+                console.log(sql);
+                // 发送AJAX请求
+
+                $.ajax({
+                    type: "POST",
+                    url: "/search/searchAll",
+                    data: {SQLrequest: sql, dataBaseName: dataBaseName},
+                    success: function(data){
+                        // 在表格中显示查询结果
+                        $(document).find("tr[class='init_1']").remove();
+                        let tr;
+                        if(dataBaseName == "Student"){
+                            tr=   '<td>' + "学号" + '</td>'
+                                + '<td>' + "姓名" + '</td>'
+                                + '<td>' + "性别" + '</td>'
+                                + '<td>' + "年龄" + '</td>'
+                                + '<td>' + "班级" + '</td>';
+                            $("#resultSearchAll_1").append("<tr id = 'init_1' class='init_1'>" + tr + "</tr>")
+                        }else if(dataBaseName == "Course"){
+                            tr=   '<td>' + "课程号" + '</td>'
+                                + '<td>' + "课程名" + '</td>'
+                                + '<td>' + "学分" + '</td>'
+                                + '<td>' + "学时" + '</td>'
+                                + '<td>' + "教师编号" + '</td>';
+                            $("#resultSearchAll_1").append("<tr id = 'init_1' class='init_1'>" + tr + "</tr>")
+                        }else if(dataBaseName == "SC"){
+                            tr=   '<td>' + "学号" + '</td>'
+                                + '<td>' + "课程号" + '</td>'
+                                + '<td>' + "成绩" + '</td>';
+                            $("#resultSearchAll_1").append("<tr id = 'init_1' class='init_1'>" + tr + "</tr>")
+                        }else{
+                            tr = null;
+                        }
+
+                        $.each(data, function (index, item) {
+                            // alert(dataBaseName)
+
+                            if(dataBaseName == "Student" ){
+                                tr =  '<td>' + item.snum + '</td>'
+                                    + '<td>' + item.sname + '</td>'
+                                    + '<td>' + item.ssex + '</td>'
+                                    + '<td>' + item.sage + '</td>'
+                                    + '<td>' + item.sclass + '</td>';
+                            }else if(dataBaseName == "Course"){
+                                tr = '<td>' + item.cnum + '</td>'
+                                    + '<td>' + item.cname + '</td>'
+                                    + '<td>' + item.credit + '</td>'
+                                    + '<td>' + item.chours + '</td>'
+                                    + '<td>' + item.tnum + '</td>';
+                            }else if(dataBaseName == "SC"){
+                                tr = '<td>' + item.snum + '</td>'
+                                    + '<td>' + item.cnum + '</td>'
+                                    + '<td>' + item.score + '</td>';
+                            }else{
+                                tr = null;
+                            }
+
+                            $("#resultSearchAll_1").append("<tr id = 'init_1' class='init_1'>" + tr + "</tr>")
+                        })},
+
+                    //$("#resultTable").html(result);
+
+                    error: function() {
+                        alert("查询失败，请重试！");
+                    }
+                });
+            });
+        });
+
+        //Search_All_2
+        $(function() {
+            // 当搜索按钮被点击时，发送AJAX请求
+            $("#searchButton2").click(function() {
+                // 获取检索条件
+                var dataBaseName = $("#dataBaseName2").val();
+                // 构造SQL语句
+                var sql = "SELECT * FROM "+ dataBaseName ;
+
+
+                console.log(sql);
+                // 发送AJAX请求
+
+                $.ajax({
+                    type: "POST",
+                    url: "/search/searchAll",
+                    data: {SQLrequest: sql, dataBaseName: dataBaseName},
+                    success: function(data){
+                        // 在表格中显示查询结果
+                        $(document).find("tr[class='init_2']").remove();
+                        let tr;
+                        if(dataBaseName == "Student"){
+                            tr=   '<td>' + "学号" + '</td>'
+                                + '<td>' + "姓名" + '</td>'
+                                + '<td>' + "性别" + '</td>'
+                                + '<td>' + "年龄" + '</td>'
+                                + '<td>' + "班级" + '</td>';
+                            $("#resultSearchAll_2").append("<tr id = 'init_2' class='init_2'>" + tr + "</tr>")
+                        }else if(dataBaseName == "Course"){
+                            tr=   '<td>' + "课程号" + '</td>'
+                                + '<td>' + "课程名" + '</td>'
+                                + '<td>' + "学分" + '</td>'
+                                + '<td>' + "学时" + '</td>'
+                                + '<td>' + "教师编号" + '</td>';
+                            $("#resultSearchAll_2").append("<tr id = 'init_2' class='init_2'>" + tr + "</tr>")
+                        }else if(dataBaseName == "SC"){
+                            tr=   '<td>' + "学号" + '</td>'
+                                + '<td>' + "课程号" + '</td>'
+                                + '<td>' + "成绩" + '</td>';
+                            $("#resultSearchAll_2").append("<tr id = 'init_2' class='init_2'>" + tr + "</tr>")
+                        }else{
+                            tr = null;
+                        }
+
+                        $.each(data, function (index, item) {
+                            // alert(dataBaseName)
+
+                            if(dataBaseName == "Student" ){
+                                tr =  '<td>' + item.snum + '</td>'
+                                    + '<td>' + item.sname + '</td>'
+                                    + '<td>' + item.ssex + '</td>'
+                                    + '<td>' + item.sage + '</td>'
+                                    + '<td>' + item.sclass + '</td>';
+                            }else if(dataBaseName == "Course"){
+                                tr = '<td>' + item.cnum + '</td>'
+                                    + '<td>' + item.cname + '</td>'
+                                    + '<td>' + item.credit + '</td>'
+                                    + '<td>' + item.chours + '</td>'
+                                    + '<td>' + item.tnum + '</td>';
+                            }else if(dataBaseName == "SC"){
+                                tr = '<td>' + item.snum + '</td>'
+                                    + '<td>' + item.cnum + '</td>'
+                                    + '<td>' + item.score + '</td>';
+                            }else{
+                                tr = null;
+                            }
+
+                            $("#resultSearchAll_2").append("<tr id = 'init_2' class='init_2'>" + tr + "</tr>")
+                        })},
+
+                    //$("#resultTable").html(result);
+
+                    error: function() {
+                        alert("查询失败，请重试！");
+                    }
+                });
+            });
+        });
+
+        //Search_All_3
+        $(function() {
+            // 当搜索按钮被点击时，发送AJAX请求
+            $("#searchButton3").click(function() {
+                // 获取检索条件
+                var dataBaseName = $("#dataBaseName3").val();
+                // 构造SQL语句
+                var sql = "SELECT * FROM "+ dataBaseName ;
+
+
+                console.log(sql);
+                // 发送AJAX请求
+
+                $.ajax({
+                    type: "POST",
+                    url: "/search/searchAll",
+                    data: {SQLrequest: sql, dataBaseName: dataBaseName},
+                    success: function(data){
+                        // 在表格中显示查询结果
+                        $(document).find("tr[class='init_3']").remove();
+                        let tr;
+                        if(dataBaseName == "Student"){
+                            tr=   '<td>' + "学号" + '</td>'
+                                + '<td>' + "姓名" + '</td>'
+                                + '<td>' + "性别" + '</td>'
+                                + '<td>' + "年龄" + '</td>'
+                                + '<td>' + "班级" + '</td>';
+                            $("#resultSearchAll_3").append("<tr id = 'init_3' class='init_3'>" + tr + "</tr>")
+                        }else if(dataBaseName == "Course"){
+                            tr=   '<td>' + "课程号" + '</td>'
+                                + '<td>' + "课程名" + '</td>'
+                                + '<td>' + "学分" + '</td>'
+                                + '<td>' + "学时" + '</td>'
+                                + '<td>' + "教师编号" + '</td>';
+                            $("#resultSearchAll_3").append("<tr id = 'init_3' class='init_3'>" + tr + "</tr>")
+                        }else if(dataBaseName == "SC"){
+                            tr=   '<td>' + "学号" + '</td>'
+                                + '<td>' + "课程号" + '</td>'
+                                + '<td>' + "成绩" + '</td>';
+                            $("#resultSearchAll_3").append("<tr id = 'init_3' class='init_3'>" + tr + "</tr>")
+                        }else{
+                            tr = null;
+                        }
+
+                        $.each(data, function (index, item) {
+                            // alert(dataBaseName)
+
+                            if(dataBaseName == "Student" ){
+                                tr =  '<td>' + item.snum + '</td>'
+                                    + '<td>' + item.sname + '</td>'
+                                    + '<td>' + item.ssex + '</td>'
+                                    + '<td>' + item.sage + '</td>'
+                                    + '<td>' + item.sclass + '</td>';
+                            }else if(dataBaseName == "Course"){
+                                tr = '<td>' + item.cnum + '</td>'
+                                    + '<td>' + item.cname + '</td>'
+                                    + '<td>' + item.credit + '</td>'
+                                    + '<td>' + item.chours + '</td>'
+                                    + '<td>' + item.tnum + '</td>';
+                            }else if(dataBaseName == "SC"){
+                                tr = '<td>' + item.snum + '</td>'
+                                    + '<td>' + item.cnum + '</td>'
+                                    + '<td>' + item.score + '</td>';
+                            }else{
+                                tr = null;
+                            }
+
+                            $("#resultSearchAll_3").append("<tr id = 'init_3' class='init_3'>" + tr + "</tr>")
+                        })},
+
+                    //$("#resultTable").html(result);
+
+                    error: function() {
+                        alert("查询失败，请重试！");
+                    }
+                });
+            });
+        });
+
+        $(function() {
+            // 当搜索按钮被点击时，发送AJAX请求
+            $("#SQLSearch").click(function() {
+                // 获取检索条件
+                var SQLString = $("#SQLString").val();
+                // 构造SQL语句
+                var sql = SQLString;
+                var dataBaseName = "Student";
+
+                console.log(sql);
+                // 发送AJAX请求
+
+                $.ajax({
+                    type: "POST",
+                    url: "/search/searchAll2",
+                    data: {SQLrequest: sql, dataBaseName: dataBaseName},
+                    success: function (result) {
+
+                        // 在表格中显示查询结果
+                        $(document).find("tr[class='init_4']").remove();
+                        let tr = "";
+                        $.each(result['col'], function (index, item){
+
+                            tr += "<td>" + item +  "</td>";
+                        });
+                        $("#SQLSearchResult").append("<tr id = 'init_4' class='init_4'>" + tr + "</tr>");
+                        $.each(result['data'], function (index, item) {
+
+                            const len = result['col'].length;
+                            tr = "";
+                            for(let i =0; i<len; i++){
+
+                                tr += "<td>" + item[result['col'][i]] + "</td>";
+                            }
+                            $("#SQLSearchResult").append("<tr id = 'init_4' class='init_4'>" + tr + "</tr>");
+                        });
+                    },
+                    // success: function(data){
+                        // 在表格中显示查询结果
+                        //$(document).find("tr[class='init_4']").remove();
+                        //let tr_h;
+                        // if(dataBaseName == "Student"){
+                        //     if(item[Snum] != undefined){
+                        //         tr_h += '<td>' + "学号" + '</td>';
+                        //     }
+                        //     if(item[Sname] != undefined){
+                        //         tr_h += '<td>' + item.snum + '</td>';
+                        //     }
+                        //     if(item[Ssex] != undefined){
+                        //         tr_h += '<td>' + item.snum + '</td>';
+                        //     }
+                        //     if(item[Sage] != undefined){
+                        //         tr_h += '<td>' + item.snum + '</td>';
+                        //     }
+                        //     if(item[Sclass] != undefined){
+                        //         tr_h += '<td>' + item.snum + '</td>';
+                        //     }
+                            // tr=   '<td>' + "学号" + '</td>'
+                            //     + '<td>' + "姓名" + '</td>'
+                            //     + '<td>' + "性别" + '</td>'
+                            //     + '<td>' + "年龄" + '</td>'
+                            //     + '<td>' + "班级" + '</td>';
+                            //$("#SQLSearchResult").append("<tr id = 'init_4' class='init_4'>" + tr_h + "</tr>")
+                       //}
+                       //  if(dataBaseName == "Course"){
+                       //      tr=   '<td>' + "课程号" + '</td>'
+                       //          + '<td>' + "课程名" + '</td>'
+                       //          + '<td>' + "学分" + '</td>'
+                       //          + '<td>' + "学时" + '</td>'
+                       //          + '<td>' + "教师编号" + '</td>';
+                       //      $("#SQLSearchResult").append("<tr id = 'init_4' class='init_4'>" + tr + "</tr>")
+                       //  }else if(dataBaseName == "SC"){
+                       //      tr=   '<td>' + "学号" + '</td>'
+                       //          + '<td>' + "课程号" + '</td>'
+                       //          + '<td>' + "成绩" + '</td>';
+                       //      $("#SQLSearchResult").append("<tr id = 'init_4' class='init_4'>" + tr + "</tr>")
+                       //  }else{
+                       //      tr = null;
+                       //  }
+
+                        // $.each(data, function (index, item) {
+                        //     // alert(dataBaseName)
+                        //
+                        //     console.log(item);
+                        //     let tr = '';
+                        //     if(dataBaseName == "Student" ){
+                        //         if(item[Snum] != undefined){
+                        //             tr += '<td>' + item.snum + '</td>';
+                        //         }
+                        //         if(item[Sname] != undefined){
+                        //             tr += '<td>' + item.snum + '</td>';
+                        //         }
+                        //         if(item[Ssex] != undefined){
+                        //             tr += '<td>' + item.snum + '</td>';
+                        //         }
+                        //         if(item[Sage] != undefined){
+                        //             tr += '<td>' + item.snum + '</td>';
+                        //         }
+                        //         if(item[Sclass] != undefined){
+                        //             tr += '<td>' + item.snum + '</td>';
+                        //         }
+                        //
+                                // tr =  '<td>' + item.snum + '</td>'
+                                //     + '<td>' + item.sname + '</td>'
+                                //     + '<td>' + item.ssex + '</td>'
+                                //     + '<td>' + item.sage + '</td>'
+                                //     + '<td>' + item.sclass + '</td>';
+                            // }else if(dataBaseName == "Course"){
+                            //     tr = '<td>' + item.cnum + '</td>'
+                            //         + '<td>' + item.cname + '</td>'
+                            //         + '<td>' + item.credit + '</td>'
+                            //         + '<td>' + item.chours + '</td>'
+                            //         + '<td>' + item.tnum + '</td>';
+                            // }else if(dataBaseName == "SC"){
+                            //     tr = '<td>' + item.snum + '</td>'
+                            //         + '<td>' + item.cnum + '</td>'
+                            //         + '<td>' + item.score + '</td>';
+                            // }else{
+                            //     tr = null;
+                            // }
+                            //
+                            // $("#SQLSearchResult").append("<tr id = 'init_4' class='init_4'>" + tr + "</tr>")
+                        //})},
+
+                    //$("#resultTable").html(result);
+
+                    error: function() {
+                        alert("查询失败，请重试！");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>学生信息查询系统</h1>
+<form id="searchAll_1">
+    <p>数据库表名：<input type="text" id="dataBaseName"> <input type="button" id="searchButton" value="装载"><p>
+</form>
+<div style="width: 500px;height: 200px; overflow-y:auto;">
+<table id="resultSearchAll_1">
+<!--    <div style="width: 500px;height: 200px; overflow-y:auto;"></div>-->
+</table>
+</div>
+
+<form id="searchAll_2">
+    <p>数据库表名：<input type="text" id="dataBaseName2"> <input type="button" id="searchButton2" value="装载"><p>
+</form>
+<div style="width: 500px;height: 200px; overflow-y:auto;">
+<table id="resultSearchAll_2">
+<!--    <div style="width: 500px;height: 200px; overflow-y:auto;"></div>-->
+</table>
+</div>
+
+<form id="searchAll_3">
+    <p>数据库表名：<input type="text" id="dataBaseName3"> <input type="button" id="searchButton3" value="装载"><p>
+</form>
+<div style="width: 500px;height: 200px; overflow-y:auto;">
+<table id="resultSearchAll_3">
+<!--    <div style="width: 500px;height: 200px; overflow-y:auto;"></div>-->
+</table>
+</div>
+
+<form id="searchForm">
+    <!-- 检索区 -->
+    <p>学号：<input type="text" id="sid"></p>
+    <p>姓名：<input type="text" id="name"></p>
+    <p>年龄：<input type="text" id="ageFrom">~<input type="text" id="ageTo"></p>
+    <p>性别：<input type="radio" name="gender" value="ma">男 <input type="radio" name="gender" value="fe">女<input type="radio" name="gender" value="全部">全部</p>
+    <p>班级：<input type="text" id="classId"></p>
+    <!--    <p>系别：<input type="text" id="dept"></p>-->
+    <!--    <p>地址：<input type="text" id="address"></p>-->
+    <p><input type="button" id="searchBtn" value="生成SQL语句"></p>
+</form>
+
+<form id="SQLSearchForm">
+    <p>请输入SQL语句：<input type="text" id="SQLString" style="height: 100px;width: 700px"><input type = "button" id="SQLSearch" value="查询"><p>
+</form>
+
+<div style="width: 500px;height: 200px; overflow-y:auto;">
+    <table id="SQLSearchResult">
+
+    </table>
+</div>
+
+
+<!-- 结果展示区 -->
+<!--<div style="width: 500px;height: 200px; overflow-y:auto;">-->
+<!--    <table id="resultTable">-->
+<!--        <tr>-->
+<!--            <td>学号</td>-->
+<!--            <td>姓名</td>-->
+<!--            <td>性别</td>-->
+<!--            <td>年龄</td>-->
+<!--            <td>班号</td>-->
+<!--        </tr>-->
+<!--    </table>-->
+<!--</div>-->
+
+</body>
+</html>

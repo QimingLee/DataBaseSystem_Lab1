@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.ScMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Sc">
+    <id column="Snum" jdbcType="CHAR" property="snum" />
+    <id column="Cnum" jdbcType="CHAR" property="cnum" />
+    <result column="Score" jdbcType="FLOAT" property="score" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    Snum, Cnum, Score
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="com.example.demo.entity.ScKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sc
+    where Snum = #{snum,jdbcType=CHAR}
+      and Cnum = #{cnum,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.example.demo.entity.ScKey">
+    delete from sc
+    where Snum = #{snum,jdbcType=CHAR}
+      and Cnum = #{cnum,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" keyColumn="Cnum" keyProperty="cnum" parameterType="com.example.demo.entity.Sc" useGeneratedKeys="true">
+    insert into sc (Snum, Score)
+    values (#{snum,jdbcType=CHAR}, #{score,jdbcType=FLOAT})
+  </insert>
+  <insert id="insertSelective" keyColumn="Cnum" keyProperty="cnum" parameterType="com.example.demo.entity.Sc" useGeneratedKeys="true">
+    insert into sc
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="snum != null">
+        Snum,
+      </if>
+      <if test="score != null">
+        Score,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="snum != null">
+        #{snum,jdbcType=CHAR},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=FLOAT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Sc">
+    update sc
+    <set>
+      <if test="score != null">
+        Score = #{score,jdbcType=FLOAT},
+      </if>
+    </set>
+    where Snum = #{snum,jdbcType=CHAR}
+      and Cnum = #{cnum,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Sc">
+    update sc
+    set Score = #{score,jdbcType=FLOAT}
+    where Snum = #{snum,jdbcType=CHAR}
+      and Cnum = #{cnum,jdbcType=CHAR}
+  </update>
+</mapper>

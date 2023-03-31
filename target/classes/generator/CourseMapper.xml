@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.CourseMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Course">
+    <id column="Cnum" jdbcType="CHAR" property="cnum" />
+    <result column="Cname" jdbcType="CHAR" property="cname" />
+    <result column="Credit" jdbcType="FLOAT" property="credit" />
+    <result column="Chours" jdbcType="INTEGER" property="chours" />
+    <result column="Tnum" jdbcType="CHAR" property="tnum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    Cnum, Cname, Credit, Chours, Tnum
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where Cnum = #{cnum,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from course
+    where Cnum = #{cnum,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" keyColumn="Cnum" keyProperty="cnum" parameterType="com.example.demo.entity.Course" useGeneratedKeys="true">
+    insert into course (Cname, Credit, Chours, 
+      Tnum)
+    values (#{cname,jdbcType=CHAR}, #{credit,jdbcType=FLOAT}, #{chours,jdbcType=INTEGER}, 
+      #{tnum,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" keyColumn="Cnum" keyProperty="cnum" parameterType="com.example.demo.entity.Course" useGeneratedKeys="true">
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cname != null">
+        Cname,
+      </if>
+      <if test="credit != null">
+        Credit,
+      </if>
+      <if test="chours != null">
+        Chours,
+      </if>
+      <if test="tnum != null">
+        Tnum,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cname != null">
+        #{cname,jdbcType=CHAR},
+      </if>
+      <if test="credit != null">
+        #{credit,jdbcType=FLOAT},
+      </if>
+      <if test="chours != null">
+        #{chours,jdbcType=INTEGER},
+      </if>
+      <if test="tnum != null">
+        #{tnum,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Course">
+    update course
+    <set>
+      <if test="cname != null">
+        Cname = #{cname,jdbcType=CHAR},
+      </if>
+      <if test="credit != null">
+        Credit = #{credit,jdbcType=FLOAT},
+      </if>
+      <if test="chours != null">
+        Chours = #{chours,jdbcType=INTEGER},
+      </if>
+      <if test="tnum != null">
+        Tnum = #{tnum,jdbcType=CHAR},
+      </if>
+    </set>
+    where Cnum = #{cnum,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Course">
+    update course
+    set Cname = #{cname,jdbcType=CHAR},
+      Credit = #{credit,jdbcType=FLOAT},
+      Chours = #{chours,jdbcType=INTEGER},
+      Tnum = #{tnum,jdbcType=CHAR}
+    where Cnum = #{cnum,jdbcType=CHAR}
+  </update>
+</mapper>
